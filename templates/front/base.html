@@ -10,16 +10,21 @@
 </head>
 <body>
 
-    <header>
+    <header class="flex justify-between bg-blue-300 border-solid border-2 border-blue-400 py-6 px-3">
+        <h1 class="font-bold text-3xl"><a href="/">NomduSite</a></h1>
+        <input class="bg-transparent border-solid border-blue-400 border-2 rounded-lg item-center" autocomplete="off" type="text" name="q" placeholder="Recherche un projet ou un créateur">
+        <img src="../../static/images/pp.jpg" class="rounded-full size-12">
 
     </header>
 
     {% block content %}
-    
+
     {% endblock %}
 
-    <footer>
-
+    <footer class="bg-blue-300 border-solid border-2 border-blue-400 text-center">
+        <p class="font-semibold text-2xl">Deltagab 2025-2026</p>
+        <a href="mailto:gabrielfortoul4@gmail.com"><p class="font-semibold text-2xl py-1">gabrielfortoul4@gmail.com</p></a>
+        <a href="https://www.youtube.com/@Deltagab"><p class="font-semibold text-2xl">Deltagab</p></a>
     </footer>
 
 </body>

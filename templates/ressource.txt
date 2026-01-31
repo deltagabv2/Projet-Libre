@@ -1,0 +1,7 @@
+    <a>
+        <h1>{{projet["titreProjet"]}}</h1>
+        <hr>
+        <h2>{{projet["descriptionProjet"]}}</h2>
+        <p>{{projet["auteurProjet"]}}</p>
+        <a><h1>❤️🩶</h1></a>
+    </a>

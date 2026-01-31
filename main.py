@@ -13,4 +13,8 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/projet")
+def projet():
+    return render_template("front/projet.html")
+
 app.run(host="0.0.0.0", port=32768)
