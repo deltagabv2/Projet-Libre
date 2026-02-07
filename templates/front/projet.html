@@ -3,21 +3,25 @@
 
 <section class="grid grid-cols-2 px-6 pt-10 pb-10">
 
-    <a class="border-2 border-solid rounded-lg border-blue-200" href="">
-        <h1 class="text-center font-semibold">Domotique</h1>
+    {% for projet in projet %}
+    <a class="border-2 border-solid rounded-lg border-blue-200 shadow-lg" href="">
+        <h1 class="text-center font-semibold text-3xl">{{projet.titreProjet}}</h1>
         <hr>
-        <h2 class="text-center font-normal">Ce site permet de controler tes appareil connecter en fonction du fournisseur que tu utilise</h2>
-        <img src="../../static/images/pp.jpg" width="200" class="">
+        <h2 class="text-center font-normal text-2xl">{{projet.descriptionProjet}}</h2>
+        <div class="flex justify-center">
+            <img src="{{projet.imageProjet}}" width="200" class="py-3">
+        </div>
+        <p class="text-center font-semibold pl-3">{{projet.auteurProjet}}</p>    
         <label class="container cursor-pointer grid grid-flow-col justify-items-center">
             
-            <p class="text-center font-normal justify-self-end pl-3">Deltagab</p>
+            <p class="text-center font-normal justify-self-end pl-3">Publié le {{projet.dateProjet}}</p>
             <input type="checkbox" class="peer hidden justify-self-end">
             <h2 class="h2-checked hidden peer-checked:block justify-self-end">❤️</h2>
             <h2 class="h2-unchecked peer-checked:hidden justify-self-end">🖤</h2>
         </label>
         </div>  
-    </a>
-    
+    </a> 
+    {% endfor %}
 
 </section>
 
