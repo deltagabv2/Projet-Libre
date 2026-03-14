@@ -1,0 +1,29 @@
+{% extends 'front/base.html' %}
+{% block content %}
+{% if erreur %}
+    <div class="flex justify-center">
+        <p class="text-center text-3xl font-bold">{{erreur}}</p>
+    </div>
+{% endif %}
+<div class="pb-8 pt-5 px-40 ">
+    <article class="p-2 text-center bg-sky-300 rounded-full flex justify-center ">
+        <form method="POST" action="{{url_for('register')}}">
+            <div class="flex justify-center">
+                <label class="text-3xl font-bold">Nom d'utilisateur : </label>
+                <input name="user" autocomplete="off" type="text" placeholder="Nom d'utilisateur" class="text-center font-medium flex justify-center border-balck border-sky-300 border-solid border-1 text-3xl py-3 rounded-lg">
+            </div>
+            <div class="flex justify-center">
+                <label class="text-3xl font-bold">Mot de passe :</label>
+                <input name="mdp" type="password" autocomplete="off" placeholder="Mot de Passe" class="text-center font-medium flex justify-center border-balck border-sky-300 border-solid border-1 text-3xl py-3 rounded-lg">
+            </div>
+            <div class="flex justify-center">
+                <label class="text-3xl font-bold">Confirmer Mot de Passe :</label>
+                <input name="confirm_mdp" type="password" autocomplete="off" placeholder="Confirmer Mot de passe" class="text-center font-medium flex justify-center border-balck border-sky-300 border-solid border-1 text-3xl py-3 rounded-lg">
+            </div>
+            <div class="flex justify-center">
+                <button type="submit">S'inscrire</button>
+            </div>
+        </form>
+    </article>
+</div>
+{% endblock %} 

@@ -1,0 +1,25 @@
+{% extends 'front/base.html' %}
+{% block content %}
+{% if erreur %}
+    <div>
+        <p>{{erreur}}</p>
+    </div>
+{% endif %}
+    <div class="pb-8 pt-5 px-40"> 
+        <article class="p-2 text-center bg-sky-300 rounded-full">
+            <form method="POST" action="{{url_for('login')}}">
+                <div class="">
+                    <label>Nom d'utilisateur :<label>
+                    <input name="user" autocomplete="off" type="text" placeholder="Mot de passe">
+                </div>
+                <div>
+                    <label>Mot de passe :</label>
+                    <input name="mdp" autocomplete="off" type="password" placeholder="Mot de passe">
+                </div>
+                <div>
+                    <button type="submit">Se Connecter</button>
+                </div>
+            </form>
+        </article>
+    </div>
+{% endblock %}
