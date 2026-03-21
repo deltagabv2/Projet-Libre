@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 import bcrypt
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -31,6 +32,32 @@ def projet():
 def publish():
     return render_template("front/publish.html")
 
+@app.route("/search", methods = ["GET"])
+def search():
+    query = request.args.get("q", "").strip()
+
+    if query == "":
+        results_projet = list(db["projet"].find({}))
+        results_user = list(db["user"].find({}))
+    else:
+        results_projet = list(db["projet"].find({
+            "$or" : [
+                {"titreProjet" : {"$regex" : query, "$options" : "i"}},
+                {"descriptionProjet" : {"$regex" : query, "$options" : "i"}},
+                {"auteurProjet" : {"$regex" : query, "$options" : "i"}}
+            ]
+        }))
+        results_user = list(db["user"].find({
+            "$or" : [
+                {"username" : {"$regex" : query, "$options" : "i"}}
+            ]
+        }))
+    if len(results_projet + results_user) <= 0:
+        return render_template("front/search_result.html", erreur = "Il n'y a pas de résultats pour :", query=query)
+    else:
+        return render_template("front/search_result.html", erreur = "Voici les résultats pour : ", projet = results_projet, user = results_user, query=query)
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -38,7 +65,7 @@ def login():
         user = db_users.find_one({"username" : request.form["user"]})
         if user:
             if bcrypt.checkpw(request.form["mdp"].encode("utf-8"), user["password"]):
-                session["user"] = user["user"]
+                session["user"] = user["username"]
                 session["role"] = user["role"]
                 return redirect("/projet")
             else:
@@ -53,7 +80,7 @@ def register():
     if request.method == 'POST':
         db_users = db["user"]
         if(db_users.find_one({"username" : request.form['user']})):
-            return render_template('register.html', erreur = "le pseudo est déjà utilisé")
+            return render_template('front/register.html', erreur = "le pseudo est déjà utilisé")
         else : 
             if(request.form["mdp"] == request.form['confirm_mdp']):
                 utilisateur = request.form['user']
@@ -71,10 +98,20 @@ def register():
                 }
 
                 db["user"].insert_one(new_user)
-                return redirect("/")
+                return redirect("/projet")
             else : 
                 return render_template('front/register.html', erreur = "les mots de passe ne correspondes pas")
     else:
         return render_template('front/register.html')
+    
+@app.route("/projet/<id_projet>")
+def pageprojet(id_projet):
+    projet = db["projet"].find_one({"_id":ObjectId(id_projet)})
+    return render_template("front/pageprojet.html", projet = projet)
+
+@app.route("/user/<id_user>")
+def pageuser(id_user):
+    user = db["user"].find_one({"_id":ObjectId(id_user)})
+    return render_template("front/pageuser.html", user = user)
 
 app.run(host="0.0.0.0", port=32768)

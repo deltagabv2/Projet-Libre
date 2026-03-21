@@ -1,0 +1,9 @@
+{% extends 'front/base.html' %}
+{% block content %}
+
+<h1 class="text-center font-semibold text-3xl">{{user.username}}</h1>
+<div class="flex justify-center">
+    <img src="{{user.imageUser}}" width="200" class="py-3">
+</div>
+
+{% endblock %}
