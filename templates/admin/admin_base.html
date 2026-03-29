@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="../../static/style.css">
     <script defer src="../../static/script.js"></script>
-    
 </head>
 <body class="">
 
@@ -16,16 +15,16 @@
         <form action="/search" method="get">
             <input class="border-solid border-blue-400 border-2 rounded-lg items-center outline-4 outline-offset-3 w-64 outline-blue-500" autocomplete="off" type="text" name="q" placeholder="Recherche un projet ou un créateur">
         </form>
-        <img src="../../static/images/pp.jpg" class="rounded-full size-12">
-
+        <img src="../../static/imageProjet/pp.jpg" class="rounded-full size-12">
     </header>
 
-    <main class="">
+    <h2>Vous êtes connecter en tant qu'administrateur sous le nom de {{session.user}}</h2>
+
+    <main>
     {% block content %}
 
     {% endblock %}
     </main>
-
     <footer class="bg-blue-300 border-solid border-2 border-blue-400 text-center">
         <p class="font-semibold text-2xl">Deltagab 2025-2026</p>
         <a href="mailto:gabrielfortoul4@gmail.com"><p class="font-semibold text-2xl py-1">gabrielfortoul4@gmail.com</p></a>

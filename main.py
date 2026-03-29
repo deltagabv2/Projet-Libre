@@ -65,8 +65,8 @@ def login():
         user = db_users.find_one({"username" : request.form["user"]})
         if user:
             if bcrypt.checkpw(request.form["mdp"].encode("utf-8"), user["password"]):
-                session["user"] = user["username"]
                 session["role"] = user["role"]
+                session["user"] = request.form["user"]
                 return redirect("/projet")
             else:
                 return render_template("front/login.html", erreur = "Erreur : Mot de Passe Incorrect")
@@ -98,6 +98,8 @@ def register():
                 }
 
                 db["user"].insert_one(new_user)
+                session["role"] = "user"
+                session["user"] = utilisateur
                 return redirect("/projet")
             else : 
                 return render_template('front/register.html', erreur = "les mots de passe ne correspondes pas")
@@ -113,5 +115,42 @@ def pageprojet(id_projet):
 def pageuser(id_user):
     user = db["user"].find_one({"_id":ObjectId(id_user)})
     return render_template("front/pageuser.html", user = user)
+
+#################################################
+#                     ADMIN                     #
+#################################################
+
+@app.route("/admin", methods = ["GET", "POST"] )
+def admin():
+    projet_data = list(db["projet"].find({}))
+    user_data = list(db["user"].find({}))
+    if "user" in session and session["role"] == "admin":
+        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data)
+    else:
+        return redirect(url_for("projet"))
+    
+@app.route("/admin/update_role/<user_id>", methods=["POST"])
+def update_role(user_id):
+    if "user" in session and session["role"] == "admin":
+        new_role = request.form.get("role")
+        
+        db["user"].update_one({"_id" : ObjectId(user_id)}, {"$set" : {"role" : new_role}})
+    return redirect(url_for("admin"))
+
+@app.route("/admin/delete_user/<user_id>")
+def delete_user(user_id):
+    if "user" in session and session["role"] == "admin":
+        db["user"].delete_one({"_id" : ObjectId(user_id)})
+    return redirect(url_for("admin"))
+
+@app.route("/admin/delete_projet/<projet_id>")
+def delete_projet(projet_id):
+    if "user" in session and session["role"] == "admin":
+        db["projet"].delete_one({"_id" : ObjectId(projet_id)})
+    return redirect(url_for("admin"))
+
+
+
+
 
 app.run(host="0.0.0.0", port=32768)
