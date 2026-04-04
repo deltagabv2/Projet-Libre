@@ -9,13 +9,40 @@
     <script defer src="../../static/script.js"></script>
 </head>
 <body class="">
+    <style>
+        .popup {
+            display: none;
+            border: none;
+            position: absolute;
+            background: rgb(255, 255, 255);
+            right: 0;
+            top: 60px;
+            padding: 20px;
+        }
+    </style>
 
     <header class="flex justify-between bg-blue-300 border-solid border-2 border-blue-400 py-6 px-3">
         <h1 class="font-bold text-3xl"><a href="/">SmartDev</a></h1>
         <form action="/search" method="get">
             <input class="border-solid border-blue-400 border-2 rounded-lg items-center outline-4 outline-offset-3 w-64 outline-blue-500" autocomplete="off" type="text" name="q" placeholder="Recherche un projet ou un créateur">
         </form>
-        <img src="../../static/imageProjet/pp.jpg" class="rounded-full size-12">
+        <img src="../../static/imageProjet/pp.jpg" id="profil" style="cursor: pointer;" class="rounded-full size-12">
+
+        <!-- Popup -->
+            <div class="popup" id="popup">
+                {%if session['user'] %}
+                    <a href="">Compte</a>
+                    <a href=""></a>
+                    {% if session["role"] == "admin" %}
+                    <hr>
+                    <a href="/admin">Panel Admin</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/register">Créer un Compte</a>
+                    <a href="/login">Se connecter</a>
+                {% endif %}
+            </div>
+            
     </header>
 
     <h2>Vous êtes connecter en tant qu'administrateur sous le nom de {{session.user}}</h2>
@@ -30,6 +57,20 @@
         <a href="mailto:gabrielfortoul4@gmail.com"><p class="font-semibold text-2xl py-1">gabrielfortoul4@gmail.com</p></a>
         <a href="https://www.youtube.com/@Deltagab"><p class="font-semibold text-2xl">Deltagab</p></a>
     </footer>
+    <script>
+        const profil = document.getElementById("profil");
+        const popup = document.getElementById("popup");
+
+        profil.onclick = () => {
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
+        };
+
+        document.addEventListener("click", (e) => {
+            if (!popup.contains(e.target) && e.target !== profil) {
+                popup.style.display = "none";
+            }
+        });
+    </script>
 
 </body>
 </html>

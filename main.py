@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import bcrypt
 from bson.objectid import ObjectId
+import random
 
 load_dotenv()
 
@@ -67,6 +68,7 @@ def login():
             if bcrypt.checkpw(request.form["mdp"].encode("utf-8"), user["password"]):
                 session["role"] = user["role"]
                 session["user"] = request.form["user"]
+                session["image"] = user["image"]
                 return redirect("/projet")
             else:
                 return render_template("front/login.html", erreur = "Erreur : Mot de Passe Incorrect")
@@ -79,6 +81,8 @@ def login():
 def register():
     if request.method == 'POST':
         db_users = db["user"]
+        image = random.randint(1, 4)
+        img_path = "../../static/imageUser/" + str(image) + ".jpg"
         if(db_users.find_one({"username" : request.form['user']})):
             return render_template('front/register.html', erreur = "le pseudo est déjà utilisé")
         else : 
@@ -94,18 +98,25 @@ def register():
                 new_user = {
                     "username" : utilisateur,
                     "password" : mdp_hash,
+                    "image" : img_path,
                     "role" : "user",
                 }
 
                 db["user"].insert_one(new_user)
                 session["role"] = "user"
+                session["image"] = img_path
                 session["user"] = utilisateur
                 return redirect("/projet")
             else : 
                 return render_template('front/register.html', erreur = "les mots de passe ne correspondes pas")
     else:
         return render_template('front/register.html')
-    
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
 @app.route("/projet/<id_projet>")
 def pageprojet(id_projet):
     projet = db["projet"].find_one({"_id":ObjectId(id_projet)})
@@ -115,6 +126,14 @@ def pageprojet(id_projet):
 def pageuser(id_user):
     user = db["user"].find_one({"_id":ObjectId(id_user)})
     return render_template("front/pageuser.html", user = user)
+
+@app.route("/compte/<username>")
+def compteuser(username):
+    if session["user"]:
+        user = db["user"].find_one({"username" : username})
+        return render_template("front/compte.html", user = user)
+    else:
+        return redirect(url_for("projet"))
 
 #################################################
 #                     ADMIN                     #
