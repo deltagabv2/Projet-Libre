@@ -1,9 +1,41 @@
 {% extends 'front/base.html' %}
 {% block content %}
 
-<h1 class="text-center font-semibold text-3xl">{{user.username}}</h1>
-<div class="flex justify-center">
-    <img src="{{user.imageUser}}" width="200" class="py-3">
-</div>
+<section class="border-2 border-solid rounded-lg border-blue-200 shadow-lg m-10 py-3">
+    <h1 class="text-center font-semibold text-3xl pb-2">{{user.username}}</h1>
+    <hr>
+    {% if user.description %}
+        <h2 class="text-center font-normal text-2xl pt-2">{{user.description}}</h2>
+    {% else %}
+        <h2 class="text-center font-normal text-2xl pt-2">Il n'y a pas de description pour cet utilisateur</h2>
+    {% endif %}
+    <div class="flex justify-center">
+        <img src="{{user.image}}" width="200" class="py-3">
+    </div> 
+            
+    <div class="flex justify-center">
+        <p class="text-center font-normal justify-self-end pl-3">Compte créer le {{user.date}}</p>
+    </div>
+</section>
+
+<h1 class="pl-10 text-4xl font-bold">Voici la Liste des Projets de {{user.username}} :</h1>
+
+<section class="grid grid-cols-2 gap-10 px-10 pt-10 pb-10">
+    {% for projet in projet %}
+    <a class="border-2 border-solid rounded-lg border-blue-200 shadow-lg" href="/projet/{{projet['_id']}}">
+        <h1 class="text-center font-semibold text-3xl">{{projet.titreProjet}}</h1>
+        <hr>
+        <h2 class="text-center font-normal text-2xl">{{projet.descriptionProjet}}</h2>
+        <div class="flex justify-center">
+            <img src="{{projet.imageProjet}}" width="200" class="py-3">
+        </div>
+        <p class="text-center font-semibold pl-3">{{projet.auteurProjet}}</p>    
+        
+        <div class="flex justify-center">
+            <p class="text-center font-normal justify-self-end pl-3">Publié le {{projet.dateProjet}}</p>
+        </div>
+    </a> 
+    {% endfor %}
+</section>
 
 {% endblock %}

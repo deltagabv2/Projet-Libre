@@ -3,8 +3,12 @@ from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 import bcrypt
+from bson import Code, Binary
+from bson.json_util import dumps
 from bson.objectid import ObjectId
 import random
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 
@@ -98,6 +102,8 @@ def register():
                 new_user = {
                     "username" : utilisateur,
                     "password" : mdp_hash,
+                    "description" : "",
+                    "date" : datetime.now(timezone(timedelta(hours=2))),
                     "image" : img_path,
                     "role" : "user",
                 }
@@ -125,7 +131,13 @@ def pageprojet(id_projet):
 @app.route("/user/<id_user>")
 def pageuser(id_user):
     user = db["user"].find_one({"_id":ObjectId(id_user)})
-    return render_template("front/pageuser.html", user = user)
+    
+    results_projet = list(db["projet"].find({
+            "$or" : [
+                {"auteurProjet" : {"$regex" : user['username'], "$options" : "i"}}
+            ]
+        }))
+    return render_template("front/pageuser.html", user = user, projet = results_projet)
 
 @app.route("/compte/<username>")
 def compteuser(username):

@@ -30,7 +30,11 @@
             <input class="border-solid border-blue-400 border-2 rounded-lg items-center outline-4 outline-offset-3 w-64 outline-blue-500" autocomplete="off" type="text" name="q" placeholder="Recherche un projet ou un créateur">
         </form>
         <div class="relative">
-            <img src="{{session['image']}}" id="profil" style="cursor: pointer;" class="rounded-full size-12">
+            {% if session['image'] %}
+                <img src="{{session['image']}}" id="profil" style="cursor: pointer;" class="rounded-full size-12">
+            {% else %}
+                <img src="../../static/imageUser/anonyme.jpg" id="profil" style="cursor: pointer;" class="rounded-full size-12">
+            {% endif %}
         
             <!-- Popup -->
             <div class="popup" id="popup">
