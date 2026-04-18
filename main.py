@@ -9,6 +9,7 @@ from bson.objectid import ObjectId
 import random
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 
@@ -22,7 +23,7 @@ client = MongoClient(mongo)
 db = client.get_database("SmartDev")
 app.secret_key = os.urandom(24)
 
-
+TAGS = ["PYTHON", "JAVA", "FLASK", "NODEJS"]
 
 @app.route("/")
 def index():
@@ -146,6 +147,44 @@ def compteuser(username):
         return render_template("front/compte.html", user = user)
     else:
         return redirect(url_for("projet"))
+
+@app.route("/projet/add")
+def new_projet():
+    return render_template("front/publish.html", tags = TAGS)
+
+@app.route("/projet/create", methods = ["POST"])
+def create_projet():
+    titre = request.form["titre"]
+    description = request.form["description"]
+    code = request.form["code"]
+    tags = request.form.getlist("tags")
+
+    image = request.files["image"]
+
+    if image:
+        nom_fichier = secure_filename(image.filename)
+        upload_path = os.path.join(app.static_folder, "imageProjet/", nom_fichier)
+        image.save(upload_path)
+        image_path = f"/static/imageProjet/{nom_fichier}"
+        date = str(datetime.now(timezone(timedelta(hours=2))))
+        dateProjet = date.split(".")
+
+    else:
+        image_path = ""
+
+    projet = {
+        "titreProjet" : titre,
+        "descriptionProjet" : description,
+        "codeProjet" : code,
+        "tagsProjet" : tags,
+        "imageProjet" : image_path,
+        "auteurProjet" : session["user"],
+        "dateProjet" : dateProjet[0],
+        "like" : 0,
+    }
+    
+    db["projet"].insert_one(projet)
+    return redirect(url_for("projet"))
 
 #################################################
 #                     ADMIN                     #

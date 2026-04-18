@@ -1,12 +1,47 @@
-{% extends "front/base.html" %}
+{% extends 'front/base.html' %}
 {% block content %}
 
-<section>
-    <input id="titre" placeholder="Entre le titre de ton projet.">
-    <input id="description" placeholder="Entre une description de ton projet.">
-    <input id="inputImg" type="image">
-    <input id="checkServDiscord" type="checkbox" placeholder="Discord">
-    <input id="checkDiscord" type="checkbox" placeholder="Serveur Discord">
-</section>
+<main class="">
+    <h1 class="">Ajoute un nouveau projet</h1>
+    <form method = "POST" action = "{{url_for('create_projet')}}" enctype = "multipart/form-data" >
+        <!--Nom-->
+        <div>
+            <label>Nom</label>
+            <input type ="text" name="titre" required placeholder="Titre du Projet">
+        </div>
+        
+        <!--Description-->
+        <div>
+            <label>Description</label>
+            <textarea name="description" rows="4" required placeholder="Décrit ton Projet" ></textarea>
+        </div>
+
+        <!--Code-->
+        <div>
+            <label>Code</label>
+            <textarea name="code" rows="6" required placeholder="Entre ton programme"></textarea>
+        </div>
+
+        <!--Image-->
+        <div>
+            <label>Image</label>
+            <input type="file" name = "image" accept = "image/*">
+        </div>
+
+        <!--Tags-->
+        <div>
+        <label>Choisis les tags : </label>
+            <div>
+                {% for tag in tags %}
+                    <input type="checkbox" id="{{ tag }}" name="tags" value = "{{ tag }}" class="">
+                    <label for="{{ tag }}" class="">{{ tag }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!--Bouton-->
+        <button type="submit">Crée ton projet</button>
+    </form>
+</main>
 
 {% endblock %}
