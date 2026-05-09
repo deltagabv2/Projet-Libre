@@ -41,6 +41,8 @@
                 {%if session['user'] %}
                     <a href="/compte/{{session['user']}}">Compte</a>
                     <br>
+                    <a href="/projet/add">Poster un Projet</a>
+                    <br>
                     <a href="/logout">Se déconnecter</a>
                     {% if session["role"] == "admin" %}
                     <hr>

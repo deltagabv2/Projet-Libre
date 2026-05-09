@@ -18,7 +18,7 @@
                 <tr>
                     <td>{{user["username"]}}</td>
                     <td>
-                        <form action="{{url_for('update_role', user_id = user['_id'])}}" method="post">
+                        <form action="{{url_for('update_role', user_id = user['_id'], user = user['username'])}}" method="post">
                             <select name="role" onchange="this.form.submit()">
                                 <option value="user" {% if user['role'] == 'user' %} selected {% endif %}>user</option>
                                 <option value="admin" {% if user['role'] == 'admin' %} selected {% endif %}>admin</option>
@@ -58,6 +58,13 @@
                 </tr>
                 {% endfor %}
             </tbody>
+        </table>
+    </section>
+
+    <!--Historique Site-->
+    <section>
+        <table>
+            <caption>Historique des réalisation sur le site !</caption>
         </table>
     </section>
 

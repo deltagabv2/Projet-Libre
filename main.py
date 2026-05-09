@@ -34,10 +34,6 @@ def projet():
     projet_data = list(db["projet"].find({}))
     return render_template("front/projet.html", projet = projet_data)
 
-@app.route("/publish")
-def publish():
-    return render_template("front/publish.html")
-
 @app.route("/search", methods = ["GET"])
 def search():
     query = request.args.get("q", "").strip()
@@ -100,16 +96,29 @@ def register():
                 salt = bcrypt.gensalt()
                 mdp_hash = bcrypt.hashpw(mdp_crypte, salt)
 
+                date = str(datetime.now(timezone(timedelta(hours=2))))
+                dateUser = date.split(".")
+
                 new_user = {
                     "username" : utilisateur,
                     "password" : mdp_hash,
                     "description" : "",
-                    "date" : datetime.now(timezone(timedelta(hours=2))),
+                    "date" : dateUser[0],
                     "image" : img_path,
                     "role" : "user",
                 }
 
                 db["user"].insert_one(new_user)
+
+                user = db["user"].find_one({"username": utilisateur})
+
+                log = {
+                    "action" : "createUser",
+                    "idUser" : user["_id"],
+                    "dateLog" : dateUser,
+                }
+                db["log"].insert_one(log)
+
                 session["role"] = "user"
                 session["image"] = img_path
                 session["user"] = utilisateur
@@ -158,19 +167,26 @@ def create_projet():
     description = request.form["description"]
     code = request.form["code"]
     tags = request.form.getlist("tags")
+    yt = request.form["yt"]
 
     image = request.files["image"]
-
+    
+    if yt:
+        yt = yt.split("/")
+        yt_path = yt[3]
+    else:
+        yt_path = ""
     if image:
         nom_fichier = secure_filename(image.filename)
         upload_path = os.path.join(app.static_folder, "imageProjet/", nom_fichier)
         image.save(upload_path)
         image_path = f"/static/imageProjet/{nom_fichier}"
-        date = str(datetime.now(timezone(timedelta(hours=2))))
-        dateProjet = date.split(".")
 
     else:
         image_path = ""
+
+    date = str(datetime.now(timezone(timedelta(hours=2))))
+    dateProjet = date.split(".")
 
     projet = {
         "titreProjet" : titre,
@@ -178,6 +194,7 @@ def create_projet():
         "codeProjet" : code,
         "tagsProjet" : tags,
         "imageProjet" : image_path,
+        "ytProjet" : yt_path,
         "auteurProjet" : session["user"],
         "dateProjet" : dateProjet[0],
         "like" : 0,
@@ -210,13 +227,41 @@ def update_role(user_id):
 @app.route("/admin/delete_user/<user_id>")
 def delete_user(user_id):
     if "user" in session and session["role"] == "admin":
+        
+
+        user = db["user"].find_one({"_id":ObjectId(user_id)})
+
+        date = str(datetime.now(timezone(timedelta(hours=2))))
+        dateLog = date.split(".")
+
+        log = {
+        "action" : "deleteUser",
+        "idUser" : user_id,
+        "user" : user["username"],
+        "dateLog" : dateLog[0],
+        "admin" : session["user"],
+        }
         db["user"].delete_one({"_id" : ObjectId(user_id)})
+        db["log"].insert_one(log)
     return redirect(url_for("admin"))
 
 @app.route("/admin/delete_projet/<projet_id>")
 def delete_projet(projet_id):
     if "user" in session and session["role"] == "admin":
+        projet = db["projet"].find_one({"_id":ObjectId(projet_id)})
+
+        date = str(datetime.now(timezone(timedelta(hours=2))))
+        dateLog = date.split(".")
+
+        log = {
+        "action" : "deleteProjet",
+        "idProjet" : projet_id,
+        "titreProjet" : projet["titreProjet"],
+        "dateLog" : dateLog[0],
+        "admin" : session["user"],
+        }
         db["projet"].delete_one({"_id" : ObjectId(projet_id)})
+        db["log"].insert_one(log)
     return redirect(url_for("admin"))
 
 

@@ -25,7 +25,14 @@
         <!--Image-->
         <div>
             <label>Image</label>
-            <input type="file" name = "image" accept = "image/*">
+            <input type="file" name = "image" accept = "image/*" required>
+        </div>
+
+        <!--Vidéo Youtube-->
+        <div>
+            <label>Lien Vidéo Youtube</label>
+            <p>Pour cela clique sur le bouton partager en dessous de la vidéo et copie le lien <br>Attention ne pas copier l'url dans la barre de recherche</p>
+            <input type="url" name="yt" placeholder="https://www.youtube.com" pattern="https://youtu.be/.*">
         </div>
 
         <!--Tags-->
