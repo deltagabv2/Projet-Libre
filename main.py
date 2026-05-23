@@ -25,12 +25,29 @@ app.secret_key = os.urandom(24)
 
 TAGS = ["PYTHON", "JAVA", "FLASK", "NODEJS"]
 
+#Update Data
+result = db["projet"].update_many({"$or" : [
+        {"tagsProjet" : {"$exists" : False}},
+        {"likes" : {"$exists" : False}},
+        {"liked_by" : {"$exists" : False}},
+]},
+    {
+        "$set" : {"tagsProjet" : [],
+                    "likes" : 0,
+                    "liked_by" : []
+                }
+    }
+)
+
+print("Database uploaded")
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/projet")
 def projet():
+    print("projet")
     projet_data = list(db["projet"].find({}))
     return render_template("front/projet.html", projet = projet_data)
 
@@ -197,11 +214,41 @@ def create_projet():
         "ytProjet" : yt_path,
         "auteurProjet" : session["user"],
         "dateProjet" : dateProjet[0],
-        "like" : 0,
+        "likes" : 0,
+        "liked_by" : []
     }
     
     db["projet"].insert_one(projet)
     return redirect(url_for("projet"))
+
+@app.route("/projet/likes/<id_projet>")
+def like_projet(id_projet):
+    print("test")
+    if 'user' not in session:
+        return redirect(url_for("login"))
+    
+    user = session["user"]
+    projet = db['projet'].find_one({"_id" : ObjectId(id_projet)})
+    
+    if not projet:
+        return redirect(url_for("projet"))
+    
+    if user in projet.get("liked_by", []):
+        db["projet"].update_one({"_id" : ObjectId(id_projet)},
+                            {"$inc" : {"likes" : -1},
+                            "$pull" : {"liked_by" : user}
+                            })
+        print("dislike")
+    else:
+        db["projet"].update_one({"_id" : ObjectId(id_projet)},
+                            {"$inc" : {"likes" : 1},
+                            "$push" : {"liked_by" : user}
+                            })
+        print("like")
+    
+    return redirect(request.referrer)
+
+
 
 #################################################
 #                     ADMIN                     #
