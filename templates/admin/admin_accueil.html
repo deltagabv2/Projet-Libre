@@ -40,7 +40,7 @@
         <table>
             <thead>
                 <th>Titre</th>
-                <th>Descrption</th>
+                <th>Description</th>
                 <th>Utilisateur</th>
                 <th>Date de Publication</th>
             </thead>
@@ -62,11 +62,57 @@
     </section>
 
     <!--Historique Site-->
-    <section>
-        <table>
-            <caption>Historique des réalisation sur le site !</caption>
-        </table>
-    </section>
+    <article>
+        <section class="flex justify-center border-1 border-lg border-solid border-blue-300">
+            <table>
+                <caption>Historique des actions sur le site !</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Action</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Admin</th>
+                    </tr>
+                </thead>
+                {% for log in log %}
+                {% if log.action == "deleteProjet" %}
+                    <tr>
+                        <th scope="row">{{log.action}}</th>
+                        <td>{{log.idProjet}}</td>
+                        <td>{{log.titreProjet}}</td>
+                        <td>{{log.dateLog}}</td>
+                        <td>{{log.admin}}</td>
+                    </tr>
+                {% elif log.action == "deleteUser" %}
+                    <tr>
+                        <th scope="row">{{log.action}}</th>
+                        <td>{{log.idUser}}</td>
+                        <td>{{log.user}}</td>
+                        <td>{{log.dateLog}}</td>
+                        <td>{{log.admin}}</td>
+                    </tr>
+                {% elif log.action == "createProjet" %}
+                    <tr>
+                        <th scope="row">{{log.action}}</th>
+                        <td>{{log.titreProjet}}</td>
+                        <td>{{log.idUser}}</td>
+                        <td>{{log.dateLog}}</td>
+                        <td>...</td>
+                    </tr>
+                {% elif log.action == "createUser" %}
+                    <tr>
+                        <th scope="row">{{log.action}}</th>
+                        <td>{{log.idUser}}</td>
+                        <td>{{log.username}}</td>
+                        <td>{{log.dateLog}}</td>
+                        <td>...</td>
+                    </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </section>
+    </article>
 
 
 {% endblock %}

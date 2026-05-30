@@ -12,7 +12,9 @@
         <iframe width="560" height="315" src="https://www.youtube.com/embed/{{projet.ytProjet}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen ></iframe>
     </div>
 {% endif %}
-<p class="text-center font-semibold pl-3">{{projet.auteurProjet}}</p>  
+<div class="flex justify-center">
+    <a class="text-center font-semibold pl-3" href="/user/{{auteur['_id']}}">{{projet.auteurProjet}}</a>  
+</div>
 
 <p class="text-center font-normal pl-3">Publié le {{projet.dateProjet}}</p>
 

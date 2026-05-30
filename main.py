@@ -47,7 +47,6 @@ def index():
 
 @app.route("/projet")
 def projet():
-    print("projet")
     projet_data = list(db["projet"].find({}))
     return render_template("front/projet.html", projet = projet_data)
 
@@ -116,6 +115,15 @@ def register():
                 date = str(datetime.now(timezone(timedelta(hours=2))))
                 dateUser = date.split(".")
 
+                if len(utilisateur) < 4:
+                    return redirect(url_for("login"))
+                
+                if len(mdp) < 4:
+                    return redirect(url_for("login"))
+                
+                if request.form['confirm_mdp'] != mdp:
+                    return redirect(url_for("login"))
+
                 new_user = {
                     "username" : utilisateur,
                     "password" : mdp_hash,
@@ -132,7 +140,8 @@ def register():
                 log = {
                     "action" : "createUser",
                     "idUser" : user["_id"],
-                    "dateLog" : dateUser,
+                    "username" : utilisateur,
+                    "dateLog" : dateUser[0],
                 }
                 db["log"].insert_one(log)
 
@@ -153,7 +162,8 @@ def logout():
 @app.route("/projet/<id_projet>")
 def pageprojet(id_projet):
     projet = db["projet"].find_one({"_id":ObjectId(id_projet)})
-    return render_template("front/pageprojet.html", projet = projet)
+    auteur = db["user"].find_one({"username" : projet['auteurProjet']})
+    return render_template("front/pageprojet.html", projet = projet, auteur = auteur)
 
 @app.route("/user/<id_user>")
 def pageuser(id_user):
@@ -217,13 +227,23 @@ def create_projet():
         "likes" : 0,
         "liked_by" : []
     }
-    
+
     db["projet"].insert_one(projet)
+
+    user = db["user"].find_one({"username": session["user"]})
+
+    log = {
+        "action" : "createProjet",
+        "titreProjet" : titre,
+        "idUser" : user["_id"],
+        "dateLog" : dateProjet[0],
+        
+    }
+    db["log"].insert_one(log)
     return redirect(url_for("projet"))
 
 @app.route("/projet/likes/<id_projet>")
 def like_projet(id_projet):
-    print("test")
     if 'user' not in session:
         return redirect(url_for("login"))
     
@@ -238,13 +258,11 @@ def like_projet(id_projet):
                             {"$inc" : {"likes" : -1},
                             "$pull" : {"liked_by" : user}
                             })
-        print("dislike")
     else:
         db["projet"].update_one({"_id" : ObjectId(id_projet)},
                             {"$inc" : {"likes" : 1},
                             "$push" : {"liked_by" : user}
                             })
-        print("like")
     
     return redirect(request.referrer)
 
@@ -258,8 +276,10 @@ def like_projet(id_projet):
 def admin():
     projet_data = list(db["projet"].find({}))
     user_data = list(db["user"].find({}))
+    log_data = list(db["log"].find({}))
+    print(log_data)
     if "user" in session and session["role"] == "admin":
-        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data)
+        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data, log = log_data)
     else:
         return redirect(url_for("projet"))
     

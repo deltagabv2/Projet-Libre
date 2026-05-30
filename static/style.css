@@ -1,0 +1,21 @@
+td, th {
+    text-align: center;
+    padding: 8px 10px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/* Validation formulaire */
+
+.champ-invalide {
+    border: 2px solid rgb(128, 0, 0);
+    outline: none;
+}
+
+.message-erreur {
+    color: rgb(128, 0, 0);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
