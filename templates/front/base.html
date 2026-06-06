@@ -15,7 +15,7 @@
     <style>
         .popup {
             display: none;
-            border: none;
+            border: 3px solid rgb(23, 143, 255);
             position: absolute;
             background: rgb(255, 255, 255);
             right: 0;
@@ -37,7 +37,7 @@
             {% endif %}
         
             <!-- Popup -->
-            <div class="popup" id="popup">
+            <div class="popup rounded-lg" id="popup">
                 {%if session['user'] %}
                     <a href="/compte/{{session['user']}}">Compte</a>
                     <br>

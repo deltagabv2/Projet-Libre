@@ -12,6 +12,7 @@
                 <th>Pseudo</th>
                 <th>Role</th>
                 <th>Nombre de Projet</th>
+                <th>Action</th>
             </thead>
             <tbody>
                 {% for user in user %}
@@ -25,6 +26,7 @@
                             </select>
                         </form>
                     </td>
+                    <td>{{nbProjet}}</td>
                     <td>
                         <a href="/user/{{user['_id']}}">Voir</a>
                         <a href="{{url_for('delete_user', user_id = user['_id'])}}" onclick="return confirm('Supprimer cet Utilisateur')">Supprimer</a>
@@ -43,6 +45,7 @@
                 <th>Description</th>
                 <th>Utilisateur</th>
                 <th>Date de Publication</th>
+                <th>Action</th>
             </thead>
             <tbody>
                 {% for projet in projet %}
@@ -51,9 +54,9 @@
                     <td>{{projet["descriptionProjet"]}}</td>
                     <td>{{projet["auteurProjet"]}}</td>
                     <td>{{projet["dateProjet"]}}</td>
-                    <td>
+                    <td class="gap-2 flex flex-wrap">
                         <a href="/projet/{{projet['_id']}}">Voir</a>
-                        <a href="{{url_for('delete_projet', projet_id = projet['_id'])}}">Supprimer</a>
+                        <a class="" href="{{url_for('delete_projet', projet_id = projet['_id'])}}">Supprimer</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -95,8 +98,8 @@
                 {% elif log.action == "createProjet" %}
                     <tr>
                         <th scope="row">{{log.action}}</th>
-                        <td>{{log.titreProjet}}</td>
                         <td>{{log.idUser}}</td>
+                        <td>{{log.titreProjet}}</td>
                         <td>{{log.dateLog}}</td>
                         <td>...</td>
                     </tr>

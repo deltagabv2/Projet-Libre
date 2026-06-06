@@ -5,10 +5,15 @@
     <h1 class="text-center font-semibold text-2xl p-4">
         Bienvenur sur SmartDev un site où tu peux partager tes projets de programmation, chercher des collaborateurs et voter pour les projets des autres
     </h1>
+    {% if session['user'] %}
     <div class="flex justify-center">
-        <button class="text-center bg-blue-400 rounded-lg p-2"><a href="register" class="text-white">Créer un compte</a></button>
+        <button class="text-center bg-blue-400 rounded-lg p-2"><a href="/projet" class="text-white">Voir les projets</a></button>
     </div>
-    <a href="/projet">Projet</a>
+    {% else %}
+    <div class="flex justify-center">
+        <button class="text-center bg-blue-400 rounded-lg p-2"><a href="/register" class="text-white">Créer un compte</a></button>
+    </div>
+    {% endif %}
 
 </main>
 

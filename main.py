@@ -10,6 +10,7 @@ import random
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from werkzeug.utils import secure_filename
+from unidecode import unidecode
 
 load_dotenv()
 
@@ -52,7 +53,7 @@ def projet():
 
 @app.route("/search", methods = ["GET"])
 def search():
-    query = request.args.get("q", "").strip()
+    query = unidecode(request.args.get("q", "").strip())
 
     if query == "":
         results_projet = list(db["projet"].find({}))
@@ -62,6 +63,7 @@ def search():
             "$or" : [
                 {"titreProjet" : {"$regex" : query, "$options" : "i"}},
                 {"descriptionProjet" : {"$regex" : query, "$options" : "i"}},
+                {"tagsProjet" : {"$regex" : query, "$options" : "i"}},
                 {"auteurProjet" : {"$regex" : query, "$options" : "i"}}
             ]
         }))
@@ -266,6 +268,16 @@ def like_projet(id_projet):
     
     return redirect(request.referrer)
 
+def nbProjet(id_user):
+    user = db["user"].find_one({"_id":ObjectId(id_user)})
+    
+    results_projet = list(db["projet"].find({
+            "$or" : [
+                {"auteurProjet" : {"$regex" : user['username'], "$options" : "i"}}
+            ]
+        }))
+    
+    return len(results_projet)
 
 
 #################################################
@@ -277,9 +289,12 @@ def admin():
     projet_data = list(db["projet"].find({}))
     user_data = list(db["user"].find({}))
     log_data = list(db["log"].find({}))
-    print(log_data)
+    log_data.reverse()
+    print(user_data)
+    print(user_data["username"])
+    print(user_data['_id'])
     if "user" in session and session["role"] == "admin":
-        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data, log = log_data)
+        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data, log = log_data, nbProjet = nbProjet(user_data["_id"]))
     else:
         return redirect(url_for("projet"))
     
