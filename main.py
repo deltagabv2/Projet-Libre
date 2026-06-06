@@ -279,6 +279,9 @@ def nbProjet(id_user):
     
     return len(results_projet)
 
+@app.context_processor
+def utility_functions():
+    return dict(nbProjet=nbProjet)
 
 #################################################
 #                     ADMIN                     #
@@ -290,11 +293,8 @@ def admin():
     user_data = list(db["user"].find({}))
     log_data = list(db["log"].find({}))
     log_data.reverse()
-    print(user_data)
-    print(user_data["username"])
-    print(user_data['_id'])
     if "user" in session and session["role"] == "admin":
-        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data, log = log_data, nbProjet = nbProjet(user_data["_id"]))
+        return render_template("admin/admin_accueil.html", user = user_data, projet = projet_data, log = log_data)
     else:
         return redirect(url_for("projet"))
     

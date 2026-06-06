@@ -26,7 +26,7 @@
                             </select>
                         </form>
                     </td>
-                    <td>{{nbProjet}}</td>
+                    <td>{{nbProjet(user['_id'])}}</td>
                     <td>
                         <a href="/user/{{user['_id']}}">Voir</a>
                         <a href="{{url_for('delete_user', user_id = user['_id'])}}" onclick="return confirm('Supprimer cet Utilisateur')">Supprimer</a>
