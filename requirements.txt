@@ -1,0 +1,7 @@
+Flask
+pymongo
+python-dotenv
+bcrypt
+Werkzeug
+Unidecode
+gunicorn
