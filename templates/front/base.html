@@ -7,7 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'style.css')}}">
     <script defer src="{{ url_for('static', filename = 'script.js')}}"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 </head>
 
 <body class="">
@@ -25,7 +27,11 @@
     </style>
 
     <header class="flex justify-between bg-blue-300 border-solid border-2 border-blue-400 py-6 px-3">
-        <h1 class="font-bold text-3xl"><a href="/">SmartDev</a></h1>
+        {% if session['user'] %}
+            <a href="/projet"><img class="transition-transform duration-300 hover:scale-105" src="/static/imageSite/logo.png" width="90"></a>
+        {% else %}
+            <a href="/"><img class="transition-transform duration-300 hover:scale-105" src="/static/imageSite/logo.png" width="90"></a>
+        {% endif %}
         <form action="/search" method="get">
             <input class="border-solid border-blue-400 border-2 rounded-lg items-center outline-4 outline-offset-3 w-64 outline-blue-500" autocomplete="off" type="text" name="q" placeholder="Recherche un projet ou un créateur">
         </form>
