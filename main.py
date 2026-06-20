@@ -24,7 +24,7 @@ client = MongoClient(mongo)
 db = client.get_database("SmartDev")
 app.secret_key = os.urandom(24)
 
-TAGS = ["PYTHON", "JAVA", "FLASK", "NODEJS"]
+TAGS = ["PYTHON", "JAVA", "FLASK", "NODEJS", "HTML", "CSS", "JS"]
 
 #Update Data
 result = db["projet"].update_many({"$or" : [
@@ -88,6 +88,7 @@ def login():
                 session["role"] = user["role"]
                 session["user"] = request.form["user"]
                 session["image"] = user["image"]
+                print(session['user'])
                 return redirect("/projet")
             else:
                 return render_template("front/login.html", erreur = "Erreur : Mot de Passe Incorrect")
@@ -194,7 +195,7 @@ def new_projet():
 def create_projet():
     titre = request.form["titre"]
     description = request.form["description"]
-    code = request.form["code"]
+    file = request.files.getlist('file')
     tags = request.form.getlist("tags")
     yt = request.form["yt"]
 
@@ -233,6 +234,9 @@ def create_projet():
     db["projet"].insert_one(projet)
 
     user = db["user"].find_one({"username": session["user"]})
+    projet = db["projet"].find_one({"auteurProjet": session["user"], "descriptionProjet" : description})
+
+    
 
     log = {
         "action" : "createProjet",
@@ -278,6 +282,48 @@ def nbProjet(id_user):
         }))
     
     return len(results_projet)
+
+
+@app.route("/compte/edit/<user_id>")
+def editcompte(user_id):
+    user = db["user"].find_one({"_id": ObjectId(user_id)})
+    return render_template("front/editcompte.html", user=user)
+
+@app.route("/compte/edit/img/<user_id>", methods=["POST"])
+def edit_img(user_id):
+    img = request.files["img"]
+
+    if img.filename != "":
+        extension = os.path.splitext(img.filename)[1]
+        nom_fichier = f"{user_id}{extension}"
+
+        upload_path = os.path.join(
+            app.static_folder,
+            "imageUser",
+            nom_fichier
+        )
+
+        img.save(upload_path)
+
+        img_path = f"/static/imageUser/{nom_fichier}"
+
+        db["user"].update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"image": img_path}}
+        )
+
+    print(session['image'])
+    session['image'] = img_path
+    print(session['image'])
+    return redirect(url_for("compteuser", username=session["user"]))
+
+@app.route("/erreur404")
+def erreur_404():
+    return render_template("front/erreur_404.html"), 404
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("front/erreur_404.html"), 404
 
 @app.context_processor
 def utility_functions():
@@ -348,6 +394,5 @@ def delete_projet(projet_id):
 
 
 
-
-
-app.run(host="0.0.0.0", port=32768)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

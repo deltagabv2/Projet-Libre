@@ -16,6 +16,11 @@
     <div class="flex justify-center">
         <p class="text-center font-normal justify-self-end pl-3">Compte créer le {{user.date}}</p>
     </div>
+    {% if session['user'] == user.username %}
+    <div>
+        <a href=""><button>Modifier le Profil</button></a>
+    </div>
+    {% endif %}
 </section>
 
 <h1 class="pl-10 text-4xl font-bold">Voici la Liste des Projets de {{user.username}} :</h1>

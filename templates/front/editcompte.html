@@ -1,0 +1,16 @@
+{% extends 'front/base.html' %}
+{% block content %}
+
+{% if erreur %}
+    <div>
+        <p>{{erreur}}</p>
+    </div>
+{% endif %}
+    <form method="POST"
+        enctype="multipart/form-data"
+        action="{{ url_for('edit_img', user_id=user['_id']) }}">
+        
+        <input type="file" name="img" accept="image/*">
+        <button type="submit">Envoyer</button>
+    </form>
+{% endblock %}
